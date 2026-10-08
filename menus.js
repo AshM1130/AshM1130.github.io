@@ -10,11 +10,10 @@ const cafeteriaMenu = {
   Thursday:  ["Grilled Cheese", "Tomato Soup", "Banana"],
   Friday:    ["Fish Tacos", "Rice", "Ice Cream"],
 };
-
 const shopMenu = {
-  Monday:    ["Notebook", "Pen", "Water Bottle"],
-  Tuesday:   ["Eraser", "Pencil Case", "Chips"],
-  Wednesday: ["Graph Paper", "Highlighters", "Juice"],
-  Thursday:  ["Folder", "Stapler", "Granola Bar"],
-  Friday:    ["Sticky Notes", "Glue Stick", "Candy"],
+  Monday:    ["Notebook — $2.50", "Pen — $1.00", "Water Bottle — $1.75"],
+  Tuesday:   ["Eraser — $0.50", "Pencil Case — $4.00", "Chips — $1.25"],
+  Wednesday: ["Graph Paper — $1.50", "Highlighters — $3.00", "Juice — $2.00"],
+  Thursday:  ["Folder — $1.00", "Stapler — $3.50", "Granola Bar — $1.50"],
+  Friday:    ["Sticky Notes — $1.25", "Glue Stick — $1.50", "Candy — $0.75"],
 };
