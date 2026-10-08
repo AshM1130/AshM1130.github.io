@@ -8,39 +8,73 @@
 </head>
 <body>
   <h1>School Menus</h1>
-  <p class="subtitle">Today's cafeteria and shop offerings</p>
+  <p class="subtitle">Today's offerings at a glance — click any day to expand</p>
 
-  <h2>🍽️ Cafeteria Menu</h2>
-  <div id="cafeteria"></div>
+  <!-- Today's auto-shown menu -->
+  <h2 id="today-heading">Today</h2>
+  <div id="today-card" class="today-card"></div>
 
-  <h2>🛒 Shop Menu</h2>
-  <div id="shop"></div>
+  <!-- Clickable days -->
+  <h2>This Week</h2>
+  <div id="days"></div>
 
   <script src="menus.js"></script>
   <script>
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
 
-    function render(containerId, menu) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
+    // --- Build the "Today" card ---
+    const todayCard = document.getElementById("today-card");
+    const todayHeading = document.getElementById("today-heading");
 
-      days.forEach(day => {
-        const items = menu[day] || [];
-        const isToday = day === today;
-
-        const div = document.createElement("div");
-        div.className = "day" + (isToday ? " today" : "");
-        div.innerHTML = `
-          <h3>${day}${isToday ? " (Today)" : ""}</h3>
-          <ul>${items.map(i => `<li>${i}</li>`).join("")}</ul>
-        `;
-        container.appendChild(div);
-      });
+    if (days.includes(today)) {
+      todayHeading.textContent = "Today — " + today;
+      todayCard.innerHTML = `
+        <div>
+          <p class="label">🍽️ Cafeteria</p>
+          <ul>${(cafeteriaMenu[today] || []).map(i => `<li>${i}</li>`).join("") || "<li>Closed</li>"}</ul>
+        </div>
+        <div>
+          <p class="label">🛒 Shop</p>
+          <ul>${(shopMenu[today] || []).map(i => `<li>${i}</li>`).join("") || "<li>Closed</li>"}</ul>
+        </div>
+      `;
+    } else {
+      todayHeading.textContent = "Today — " + today;
+      todayCard.innerHTML = `<p>No menus today. Enjoy your weekend! 🎉</p>`;
     }
 
-    render("cafeteria", cafeteriaMenu);
-    render("shop", shopMenu);
+    // --- Build the clickable day list ---
+    const daysContainer = document.getElementById("days");
+
+    days.forEach(day => {
+      const isToday = day === today;
+
+      const button = document.createElement("button");
+      button.className = "day-button" + (isToday ? " today open" : "");
+      button.innerHTML = `${day}${isToday ? " (Today)" : ""}<span class="arrow">▶</span>`;
+
+      const content = document.createElement("div");
+      content.className = "day-content" + (isToday ? " open" : "");
+      content.innerHTML = `
+        <div>
+          <h4>🍽️ Cafeteria</h4>
+          <ul>${(cafeteriaMenu[day] || []).map(i => `<li>${i}</li>`).join("") || "<li>—</li>"}</ul>
+        </div>
+        <div>
+          <h4>🛒 Shop</h4>
+          <ul>${(shopMenu[day] || []).map(i => `<li>${i}</li>`).join("") || "<li>—</li>"}</ul>
+        </div>
+      `;
+
+      button.addEventListener("click", () => {
+        button.classList.toggle("open");
+        content.classList.toggle("open");
+      });
+
+      daysContainer.appendChild(button);
+      daysContainer.appendChild(content);
+    });
   </script>
 </body>
 </html>
