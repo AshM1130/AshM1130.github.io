@@ -28,9 +28,22 @@
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
 
-    const listHtml = (items) => {
+    // Cafeteria items: just a list
+    const cafeteriaListHtml = (items) => {
       if (!items || items.length === 0) return '<div class="closed">Closed</div>';
       return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
+    };
+
+    // Shop items: split "Name — $Price" and render price on the right
+    const shopListHtml = (items) => {
+      if (!items || items.length === 0) return '<div class="closed">Closed</div>';
+      return "<ul>" + items.map(i => {
+        const parts = i.split(" — ");
+        if (parts.length === 2) {
+          return `<li class="shop-item"><span>${parts[0]}</span><span class="price">${parts[1]}</span></li>`;
+        }
+        return `<li>${i}</li>`;
+      }).join("") + "</ul>";
     };
 
     // ===== TODAY =====
@@ -44,11 +57,11 @@
           <div class="today-grid">
             <div class="section">
               <h3>🍽️ Cafeteria</h3>
-              ${listHtml(cafeteriaMenu[today])}
+              ${cafeteriaListHtml(cafeteriaMenu[today])}
             </div>
             <div class="section">
               <h3>🛒 Shop</h3>
-              ${listHtml(shopMenu[today])}
+              ${shopListHtml(shopMenu[today])}
             </div>
           </div>
         </div>
@@ -81,11 +94,11 @@
           <div class="day-body-inner">
             <div>
               <h4>🍽️ Cafeteria</h4>
-              ${listHtml(cafeteriaMenu[day])}
+              ${cafeteriaListHtml(cafeteriaMenu[day])}
             </div>
             <div>
               <h4>🛒 Shop</h4>
-              ${listHtml(shopMenu[day])}
+              ${shopListHtml(shopMenu[day])}
             </div>
           </div>
         </div>
