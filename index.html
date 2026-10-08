@@ -7,73 +7,94 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>School Menus</h1>
-  <p class="subtitle">Today's offerings at a glance — click any day to expand</p>
+  <div class="container">
+    <header>
+      <h1>School Menus</h1>
+      <p>Cafeteria &amp; shop offerings, updated daily</p>
+    </header>
 
-  <!-- Today's auto-shown menu -->
-  <h2 id="today-heading">Today</h2>
-  <div id="today-card" class="today-card"></div>
+    <!-- TODAY -->
+    <section id="today-section"></section>
 
-  <!-- Clickable days -->
-  <h2>This Week</h2>
-  <div id="days"></div>
+    <!-- WEEK -->
+    <section class="week-section">
+      <h2>This Week</h2>
+      <div id="week-list" class="week-list"></div>
+    </section>
+  </div>
 
   <script src="menus.js"></script>
   <script>
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
 
-    // --- Build the "Today" card ---
-    const todayCard = document.getElementById("today-card");
-    const todayHeading = document.getElementById("today-heading");
+    const listHtml = (items) => {
+      if (!items || items.length === 0) return '<div class="closed">Closed</div>';
+      return "<ul>" + items.map(i => `<li>${i}</li>`).join("") + "</ul>";
+    };
+
+    // ===== TODAY =====
+    const todaySection = document.getElementById("today-section");
 
     if (days.includes(today)) {
-      todayHeading.textContent = "Today — " + today;
-      todayCard.innerHTML = `
-        <div>
-          <p class="label">🍽️ Cafeteria</p>
-          <ul>${(cafeteriaMenu[today] || []).map(i => `<li>${i}</li>`).join("") || "<li>Closed</li>"}</ul>
-        </div>
-        <div>
-          <p class="label">🛒 Shop</p>
-          <ul>${(shopMenu[today] || []).map(i => `<li>${i}</li>`).join("") || "<li>Closed</li>"}</ul>
+      todaySection.innerHTML = `
+        <div class="today-card">
+          <span class="today-label">Today</span>
+          <h2>${today}</h2>
+          <div class="today-grid">
+            <div class="section">
+              <h3>🍽️ Cafeteria</h3>
+              ${listHtml(cafeteriaMenu[today])}
+            </div>
+            <div class="section">
+              <h3>🛒 Shop</h3>
+              ${listHtml(shopMenu[today])}
+            </div>
+          </div>
         </div>
       `;
     } else {
-      todayHeading.textContent = "Today — " + today;
-      todayCard.innerHTML = `<p>No menus today. Enjoy your weekend! 🎉</p>`;
+      todaySection.innerHTML = `
+        <div class="today-card">
+          <span class="today-label">Today</span>
+          <h2>${today}</h2>
+          <div class="closed">No menus today — enjoy your weekend! 🎉</div>
+        </div>
+      `;
     }
 
-    // --- Build the clickable day list ---
-    const daysContainer = document.getElementById("days");
+    // ===== WEEK =====
+    const weekList = document.getElementById("week-list");
 
     days.forEach(day => {
       const isToday = day === today;
 
-      const button = document.createElement("button");
-      button.className = "day-button" + (isToday ? " today open" : "");
-      button.innerHTML = `${day}${isToday ? " (Today)" : ""}<span class="arrow">▶</span>`;
+      const card = document.createElement("div");
+      card.className = "day-card" + (isToday ? " today" : "");
 
-      const content = document.createElement("div");
-      content.className = "day-content" + (isToday ? " open" : "");
-      content.innerHTML = `
-        <div>
-          <h4>🍽️ Cafeteria</h4>
-          <ul>${(cafeteriaMenu[day] || []).map(i => `<li>${i}</li>`).join("") || "<li>—</li>"}</ul>
+      card.innerHTML = `
+        <div class="day-header">
+          <span>${day}${isToday ? '<span class="badge">Today</span>' : ""}</span>
+          <span class="arrow">▶</span>
         </div>
-        <div>
-          <h4>🛒 Shop</h4>
-          <ul>${(shopMenu[day] || []).map(i => `<li>${i}</li>`).join("") || "<li>—</li>"}</ul>
+        <div class="day-body">
+          <div class="day-body-inner">
+            <div>
+              <h4>🍽️ Cafeteria</h4>
+              ${listHtml(cafeteriaMenu[day])}
+            </div>
+            <div>
+              <h4>🛒 Shop</h4>
+              ${listHtml(shopMenu[day])}
+            </div>
+          </div>
         </div>
       `;
 
-      button.addEventListener("click", () => {
-        button.classList.toggle("open");
-        content.classList.toggle("open");
-      });
+      const header = card.querySelector(".day-header");
+      header.addEventListener("click", () => card.classList.toggle("open"));
 
-      daysContainer.appendChild(button);
-      daysContainer.appendChild(content);
+      weekList.appendChild(card);
     });
   </script>
 </body>
